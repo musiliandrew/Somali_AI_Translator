@@ -1,0 +1,34 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://newsdb_zlju_user:c67Ll0PfL4PpgpiUtAaYUjXHmPl30ncI@dpg-d17t5kbuibrs738427ig-a.oregon-postgres.render.com/newsdb_zlju
+    volumes:
+      - ./Backend:/app
+    networks:
+      - news-network
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn --bind 0.0.0.0:8000 Backend.wsgi:application"
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Frontend:/app
+    depends_on:
+      - backend
+    networks:
+      - news-network
+    command: npm run dev -- --host 0.0.0.0
+
+networks:
+  news-network:
+    driver: bridge
