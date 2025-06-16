@@ -1,132 +1,167 @@
-AI Translator News Prototype
-This project is a news article platform that translates English articles to Somali using the facebook/nllb-200-distilled-600M model. The backend is built with Django and uses an external Render PostgreSQL database. The frontend uses React + Vite. This guide will help you set up and run the project locally using Docker.
-Prerequisites
+I’ve prepared a further refined and polished version of the .md file for your AI Translator News Prototype, incorporating best practices for Markdown documentation. This version improves clarity, adds a table of contents, and ensures a professional, user-friendly structure. If you meant a different .md file or have specific changes in mind, please clarify, and I’ll tailor the response accordingly.
+markdown
+# AI Translator News Prototype
 
-Docker and Docker Compose installed (Install Docker).
-Node.js (optional, for generating package-lock.json locally if needed).
-A .env file (provided separately) with DATABASE_URL and SECRET_KEY.
+The AI Translator News Prototype is a platform for publishing and translating news articles from English to Somali using the `facebook/nllb-200-distilled-600M` model. The backend is built with Django, connected to an external Render PostgreSQL database, while the frontend uses React with Vite. This guide explains how to set up and run the project locally using Docker.
 
-Project Structure
+## Table of Contents
 
-Backend/: Django backend with translation logic and API.
-Frontend/: React + Vite frontend.
-docker-compose.yml: Defines services for backend and frontend.
+- [Prerequisites](#prerequisites)
+- [Project Structure](#project-structure)
+- [Setup Instructions](#setup-instructions)
+  - [1. Clone the Repository](#1-clone-the-repository)
+  - [2. Set Up the `.env` File](#2-set-up-the-env-file)
+  - [3. Generate `package-lock.json` for Frontend](#3-generate-package-lockjson-for-frontend)
+  - [4. Build and Start Containers](#4-build-and-start-containers)
+  - [5. Create a Superuser](#5-create-a-superuser)
+  - [6. Access the Application](#6-access-the-application)
+  - [7. Test Translation](#7-test-translation)
+- [Development Notes](#development-notes)
+- [Troubleshooting](#troubleshooting)
+  - [Frontend Build Fails](#frontend-build-fails)
+  - [Backend Build Slow](#backend-build-slow)
+  - [Database Connection Issues](#database-connection-issues)
+  - [Translation Errors](#translation-errors)
+- [Deployment](#deployment)
 
-Setup Instructions
+## Prerequisites
 
-Clone the Repository
+Before starting, ensure you have:
+
+- **Docker and Docker Compose**: [Install Docker](https://docs.docker.com/get-docker/).
+- **Node.js**: Optional, for local `package-lock.json` generation.
+- **.env File**: Provided separately, containing `DATABASE_URL` and `SECRET_KEY`.
+
+## Project Structure
+
+- **`Backend/`**: Django backend with translation logic and API endpoints.
+- **`Frontend/`**: React + Vite frontend for the user interface.
+- **`docker-compose.yml`**: Configuration for backend and frontend services.
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+Clone the project and navigate to the directory:
+
+```bash
 git clone <repository-url>
 cd AI_translator
+2. Set Up the .env File
 
+Copy the provided .env file to the Backend/ directory:
+bash
+cp /path/to/provided/env/file Backend/.env
 
-Set Up the .env File
-
-Copy the .env file I sent you to the Backend/ directory:cp /path/to/provided/env/file Backend/.env
-
-
-The .env file should contain:DATABASE_URL=postgresql://newsdb_zlju_user:<password>@dpg-d17t5kbuibrs738427ig-a.oregon-postgres.render.com/newsdb_zlju
+The .env file should include:
+text
+DATABASE_URL=postgresql://newsdb_zlju_user:<password>@dpg-d17t5kbuibrs738427ig-a.oregon-postgres.render.com/newsdb_zlju
 SECRET_KEY=<your-secure-secret-key>
 
+    Warning: Never commit the .env file to Git. Confirm Backend/.env is in .gitignore.
 
-Do not commit .env to Git! Ensure Backend/.env is in .gitignore.
+3. Generate package-lock.json for Frontend
 
-
-Generate package-lock.json for Frontend
-
-Navigate to the Frontend/ directory and run:cd Frontend
+Navigate to the Frontend/ directory and install dependencies:
+bash
+cd Frontend
 npm install
 
+This creates package-lock.json. If Node.js is unavailable, use Docker:
+bash
+docker run --rm -v $(pwd)/Frontend:/app -w /app node:18 npm install
 
-This creates package-lock.json. If you don’t have Node.js installed, use Docker:docker run --rm -v $(pwd)/Frontend:/app -w /app node:18 npm install
-
-
-Verify package-lock.json exists:ls Frontend
+Verify the files:
+bash
+ls Frontend
 
 You should see package.json and package-lock.json.
+4. Build and Start Containers
 
+From the project root (AI_translator/), build and launch the Docker containers:
+bash
+docker-compose up --build
 
-Build and Start Containers
+This starts:
 
-From the project root (AI_translator/), build and run the Docker containers:docker-compose up --build
+    Backend (Django): http://localhost:8000
+    Frontend (React + Vite): http://localhost:5173
 
+5. Create a Superuser
 
-This builds and starts:
-Backend (Django) on http://localhost:8000
-Frontend (React + Vite) on http://localhost:5173
+Open a new terminal and create a superuser for the Django admin panel:
+bash
+docker-compose exec backend python manage.py createsuperuser
 
+Follow the prompts to set a username, email, and password.
+6. Access the Application
 
+    Frontend: Visit http://localhost:5173 in your browser.
+    Backend API: Test with curl http://localhost:8000/api/articles/ or open in a browser.
+    Admin Panel: Access http://localhost:8000/admin/ and log in with superuser credentials.
 
+7. Test Translation
 
-Create a Superuser for Admin Access
+    Log in to the admin panel (http://localhost:8000/admin/).
+    Create an article with English title and content (title_en, content_en).
+    Save and confirm Somali translations (title_so, content_so) are generated.
 
-Open a new terminal and run:docker-compose exec backend python manage.py createsuperuser
+Development Notes
 
+    Database: Uses an external Render PostgreSQL database, configured in .env.
 
-Follow the prompts to create a username, email, and password.
+    Media Files: Stored in Backend/media/. Create the directory if needed:
+    bash
 
+mkdir -p Backend/media
 
-Access the Application
+Frontend Development: Edit code in Frontend/src/. Changes hot-reload automatically.
 
-Frontend: Open http://localhost:5173 in your browser.
-Backend API: Test with curl http://localhost:8000/api/articles/ or visit in a browser.
-Admin Panel: Go to http://localhost:8000/admin/ and log in with the superuser credentials.
-
-
-Test Translation
-
-Log in to the admin panel (http://localhost:8000/admin/).
-Create a new article with English title and content (title_en, content_en).
-Save and verify that Somali translations (title_so, content_so) are generated automatically.
-
-
-
-Notes
-
-Database: The project uses an external Render PostgreSQL database (configured in .env).
-Media Files: Uploaded files (e.g., images) are stored in Backend/media/. Ensure this directory exists:mkdir -p Backend/media
-
-
-Frontend Development: Edit React code in Frontend/src/. Changes are hot-reloaded.
-Backend Development: Edit Django code in Backend/. Run migrations if models change:docker-compose exec backend python manage.py makemigrations
+Backend Development: Modify Django code in Backend/. Apply model changes with:
+bash
+docker-compose exec backend python manage.py makemigrations
 docker-compose exec backend python manage.py migrate
 
+Logs: Monitor logs for debugging:
+bash
 
-Logs: Check for errors with:docker-compose logs backend
-docker-compose logs frontend
-
-
+    docker-compose logs backend
+    docker-compose logs frontend
 
 Troubleshooting
+Frontend Build Fails
 
-Frontend Build Fails:
-Ensure package-lock.json exists in Frontend/.
-Run npm install in Frontend/ or use the Docker command above.
+    Confirm package-lock.json exists in Frontend/.
+    Run npm install in Frontend/ or use the Docker command above.
 
+Backend Build Slow
 
-Backend Build Slow:
-Builds may take time due to large dependencies (torch, transformers). Be patient or check logs:docker-compose logs backend
+    Large dependencies (torch, transformers) may slow builds. Check logs:
+    bash
 
+docker-compose logs backend
 
-Clear Docker cache if needed:docker-compose build --no-cache
+Rebuild without cache if necessary:
+bash
 
+    docker-compose build --no-cache
 
+Database Connection Issues
 
+    Verify DATABASE_URL in Backend/.env matches provided credentials.
 
-Database Connection Issues:
-Verify DATABASE_URL in Backend/.env matches the provided credentials.
-Test connectivity:docker-compose exec backend psql $DATABASE_URL
+    Test connection:
+    bash
 
+    docker-compose exec backend psql $DATABASE_URL
 
-Check Render’s dashboard for database status.
+    Check Render’s dashboard for database status.
 
+Translation Errors
 
-Translation Errors:
-If translations fail, check logs for transformers errors.
-Try forcing CPU in Backend/articles/utils.py (edit self.device = "cpu").
+    Inspect logs for transformers issues.
+    Force CPU usage in Backend/articles/utils.py by setting self.device = "cpu".
 
+Deployment
 
-
-For Deployment
-
-This setup is for local development. For production (e.g., Render), contact me for additional steps (e.g., adjusting for Render’s environment, using S3 for media).
-
+This guide covers local development. For production deployment (e.g., on Render), contact the project maintainer for guidance on Render-specific configurations, such as environment settings or S3 for media storage.
