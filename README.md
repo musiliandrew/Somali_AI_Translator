@@ -1,5 +1,3 @@
-I’ve prepared a further refined and polished version of the .md file for your AI Translator News Prototype, incorporating best practices for Markdown documentation. This version improves clarity, adds a table of contents, and ensures a professional, user-friendly structure. If you meant a different .md file or have specific changes in mind, please clarify, and I’ll tailor the response accordingly.
-markdown
 # AI Translator News Prototype
 
 The AI Translator News Prototype is a platform for publishing and translating news articles from English to Somali using the `facebook/nllb-200-distilled-600M` model. The backend is built with Django, connected to an external Render PostgreSQL database, while the frontend uses React with Vite. This guide explains how to set up and run the project locally using Docker.
