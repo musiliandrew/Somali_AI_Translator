@@ -13,7 +13,7 @@ services:
       - news-network
     command: >
       sh -c "python manage.py migrate &&
-             gunicorn --bind 0.0.0.0:8000 Backend.wsgi:application"
+             gunicorn --timeout 600 --bind 0.0.0.0:8000 Backend.wsgi:application"
 
   frontend:
     build:

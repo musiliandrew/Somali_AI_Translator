@@ -17,7 +17,7 @@ DATABASES = {
 # Security and CORS
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-2kk5b7ua1rym*@_=k4pjuy_eg3z-(gh@gd$w$$_ba+9qmod+3_')
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend', '0.0.0.0']
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://frontend:5173',
